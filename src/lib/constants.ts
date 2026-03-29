@@ -1,4 +1,4 @@
-export const SITE_NAME = "장례닷컴";
+export const SITE_NAME = "처음장례";
 export const SITE_URL = "https://jangrae.com";
 export const SITE_DESCRIPTION = "장례 정보의 모든 것. 당황하지 마세요, 하나씩 안내해 드립니다.";
 export const SITE_TAGLINE = "당황하지 마세요, 하나씩 안내해 드립니다.";

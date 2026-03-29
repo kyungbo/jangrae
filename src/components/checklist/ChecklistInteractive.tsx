@@ -11,6 +11,11 @@ import {
   Phone,
   RotateCcw,
 } from "lucide-react";
+import {
+  trackStepComplete,
+  trackChecklistComplete,
+  trackPhoneClick,
+} from "@/lib/analytics";
 
 interface Props {
   data: ChecklistData;
@@ -24,6 +29,18 @@ export default function ChecklistInteractive({ data }: Props) {
   const step = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
   const allDone = completedSteps.size === steps.length;
+
+  const handleComplete = (stepId: number) => {
+    completeStep(stepId);
+    const s = steps.find((x) => x.id === stepId);
+    if (s && !completedSteps.has(stepId)) {
+      trackStepComplete(data.situation, stepId, s.title);
+    }
+    // 전체 완료 체크 (이번 toggle로 추가되는 경우 size+1)
+    if (!completedSteps.has(stepId) && completedSteps.size + 1 === steps.length) {
+      trackChecklistComplete(data.situation);
+    }
+  };
 
   if (allDone && isLastStep) {
     return (
@@ -82,7 +99,7 @@ export default function ChecklistInteractive({ data }: Props) {
       <div className="bg-white rounded-xl border border-border p-6 sm:p-8 mb-6 step-transition">
         <div className="flex items-start gap-4 mb-6">
           <button
-            onClick={() => completeStep(step.id)}
+            onClick={() => handleComplete(step.id)}
             className={`w-8 h-8 rounded-lg border-2 flex items-center justify-center shrink-0 transition-all ${
               completedSteps.has(step.id)
                 ? "bg-success border-success text-white"
@@ -131,6 +148,7 @@ export default function ChecklistInteractive({ data }: Props) {
           <div className="ml-12">
             <a
               href={`tel:${step.phone}`}
+              onClick={() => trackPhoneClick(step.phone!, data.situation)}
               className="inline-flex items-center gap-2 bg-navy text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-navy-light transition-colors"
             >
               <Phone size={16} />

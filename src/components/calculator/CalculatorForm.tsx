@@ -2,6 +2,7 @@
 
 import { useCalculator } from "@/hooks/useCalculator";
 import { calculateCost } from "@/lib/calculator/calculate";
+import { trackCalculatorStep, trackCalculatorResult } from "@/lib/analytics";
 import StepGuests from "./StepGuests";
 import StepRegion from "./StepRegion";
 import StepFuneralType from "./StepFuneralType";
@@ -13,6 +14,8 @@ const TOTAL_STEPS = 4;
 export default function CalculatorForm() {
   const store = useCalculator();
 
+  const stepLabels = ["조문객 수", "지역", "장례 유형", "상조 여부"];
+
   const handleCalculate = () => {
     const result = calculateCost({
       guestCount: store.guestCount,
@@ -21,6 +24,12 @@ export default function CalculatorForm() {
       hasSangjo: store.hasSangjo,
     });
     store.setResult(result);
+    store.nextStep();
+    trackCalculatorResult(result.total.min, result.total.max);
+  };
+
+  const handleNext = () => {
+    trackCalculatorStep(store.step, stepLabels[store.step]);
     store.nextStep();
   };
 
@@ -80,7 +89,7 @@ export default function CalculatorForm() {
 
         {store.step < TOTAL_STEPS - 1 ? (
           <button
-            onClick={store.nextStep}
+            onClick={handleNext}
             disabled={!canProceed()}
             className="bg-navy text-white px-8 py-3 rounded-lg text-sm font-semibold hover:bg-navy-light disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
