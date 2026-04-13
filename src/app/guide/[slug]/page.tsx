@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Clock, ChevronLeft } from "lucide-react";
+import { Clock, ChevronLeft, ArrowRight } from "lucide-react";
 import { createMetadata } from "@/lib/metadata";
-import { getGuide, getAllGuideSlugs } from "@/data/guides";
+import { getGuide, getAllGuideSlugs, guides } from "@/data/guides";
 import JsonLd from "@/components/seo/JsonLd";
 import { SITE_NAME, SITE_URL } from "@/lib/constants";
 
@@ -19,7 +19,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const guide = getGuide(slug);
   if (!guide) return {};
-  return createMetadata(guide.title, guide.description, `/guide/${slug}`);
+  return createMetadata(
+    guide.title,
+    guide.description,
+    `/guide/${slug}`,
+    guide.tags
+  );
 }
 
 export default async function GuideDetailPage({ params }: PageProps) {
@@ -30,8 +35,13 @@ export default async function GuideDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  const relatedGuides = guides
+    .filter((g) => g.slug !== slug)
+    .slice(0, 2);
+
   return (
     <div className="py-12 px-4">
+      {/* Article + BreadcrumbList 스키마 */}
       <JsonLd
         data={{
           "@context": "https://schema.org",
@@ -40,6 +50,11 @@ export default async function GuideDetailPage({ params }: PageProps) {
           description: guide.description,
           datePublished: guide.publishedAt,
           dateModified: guide.updatedAt,
+          author: {
+            "@type": "Organization",
+            name: SITE_NAME,
+            url: SITE_URL,
+          },
           publisher: {
             "@type": "Organization",
             name: SITE_NAME,
@@ -47,17 +62,49 @@ export default async function GuideDetailPage({ params }: PageProps) {
           },
         }}
       />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "홈",
+              item: SITE_URL,
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "장례 가이드",
+              item: `${SITE_URL}/guide`,
+            },
+            {
+              "@type": "ListItem",
+              position: 3,
+              name: guide.title,
+              item: `${SITE_URL}/guide/${slug}`,
+            },
+          ],
+        }}
+      />
 
       <article className="max-w-3xl mx-auto">
         {/* Breadcrumb */}
-        <nav className="mb-6">
-          <Link
-            href="/guide"
-            className="inline-flex items-center gap-1 text-sm text-text-secondary hover:text-navy transition-colors"
-          >
-            <ChevronLeft size={16} />
-            가이드 목록
-          </Link>
+        <nav aria-label="Breadcrumb" className="mb-6">
+          <ol className="flex items-center gap-2 text-sm text-text-secondary">
+            <li>
+              <Link href="/" className="hover:text-navy transition-colors">홈</Link>
+            </li>
+            <li>/</li>
+            <li>
+              <Link href="/guide" className="hover:text-navy transition-colors">가이드</Link>
+            </li>
+            <li>/</li>
+            <li className="text-navy font-medium truncate max-w-[200px]">
+              {guide.title}
+            </li>
+          </ol>
         </nav>
 
         {/* Header */}
@@ -83,7 +130,9 @@ export default async function GuideDetailPage({ params }: PageProps) {
               <Clock size={14} />
               {guide.readingTime}분 읽기
             </span>
-            <span>최근 업데이트: {guide.updatedAt}</span>
+            <span className="bg-green-50 text-success px-2 py-0.5 rounded text-xs font-medium">
+              {guide.updatedAt} 업데이트
+            </span>
           </div>
         </header>
 
@@ -118,8 +167,34 @@ export default async function GuideDetailPage({ params }: PageProps) {
           ))}
         </div>
 
+        {/* Related Guides */}
+        {relatedGuides.length > 0 && (
+          <div className="mt-12 border-t border-border pt-8">
+            <h3 className="text-lg font-bold text-navy mb-4">관련 가이드</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {relatedGuides.map((rg) => (
+                <Link
+                  key={rg.slug}
+                  href={`/guide/${rg.slug}`}
+                  className="group flex items-start gap-3 bg-cream-dark rounded-lg p-4 hover:bg-white hover:shadow transition-all"
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-navy group-hover:text-navy-light transition-colors truncate">
+                      {rg.title}
+                    </p>
+                    <p className="text-xs text-text-secondary mt-1 line-clamp-2">
+                      {rg.description}
+                    </p>
+                  </div>
+                  <ArrowRight size={16} className="text-text-secondary shrink-0 mt-1" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* CTA */}
-        <div className="mt-12 bg-navy/5 rounded-xl p-6 text-center">
+        <div className="mt-8 bg-navy/5 rounded-xl p-6 text-center">
           <p className="text-navy font-semibold mb-2">
             더 자세한 안내가 필요하신가요?
           </p>

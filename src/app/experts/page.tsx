@@ -6,7 +6,8 @@ import { Star, MapPin, Clock } from "lucide-react";
 export const metadata: Metadata = createMetadata(
   "장례 전문가 찾기",
   "지역 기반으로 신뢰할 수 있는 장례 전문가를 찾아보세요. 장례지도사, 상조 상담사 등 전문가 정보를 제공합니다.",
-  "/experts"
+  "/experts",
+  ["장의사", "장례지도사", "상조 상담", "장례 전문가", "장례식장 추천"]
 );
 
 export default function ExpertsPage() {

@@ -4,9 +4,10 @@ import CalculatorForm from "@/components/calculator/CalculatorForm";
 import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = createMetadata(
-  "장례 비용 계산기",
-  "조문객 수, 지역, 장례 방식에 따른 예상 장례 비용을 계산해 보세요. 투명한 비용 정보를 제공합니다.",
-  "/calculator"
+  "장례 비용 계산기 - 2026년 예상 장례비용 알아보기",
+  "조문객 수, 지역, 장례 방식에 따른 예상 장례 비용을 계산해 보세요. 2026년 기준 투명한 비용 정보를 제공합니다.",
+  "/calculator",
+  ["장례 비용", "장례비용", "장례식장 비용", "장례 비용 계산기", "3일장 비용", "화장 비용", "장례비용 얼마"]
 );
 
 export default function CalculatorPage() {

@@ -7,7 +7,8 @@ import { guides } from "@/data/guides";
 export const metadata: Metadata = createMetadata(
   "장례 가이드",
   "장례 절차, 비용, 상주 예절, 상조 비교 등 장례에 관한 모든 정보를 상세하게 안내합니다.",
-  "/guide"
+  "/guide",
+  ["장례 가이드", "장례 절차", "초보 상주", "조문 예절", "상조 비교", "장례 정보"]
 );
 
 export default function GuidePage() {
