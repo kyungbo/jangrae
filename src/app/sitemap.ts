@@ -55,6 +55,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     ...guideUrls,
     {
+      url: `${SITE_URL}/burial-types`,
+      lastModified: new Date("2026-04-13"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/post-funeral`,
+      lastModified: new Date("2026-04-13"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/funeral-halls`,
+      lastModified: new Date("2026-04-13"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: `${SITE_URL}/experts`,
       lastModified: new Date("2026-03-29"),
       changeFrequency: "weekly",

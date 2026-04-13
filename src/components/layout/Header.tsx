@@ -8,8 +8,11 @@ import { SITE_NAME } from "@/lib/constants";
 const navLinks = [
   { href: "/checklist", label: "체크리스트" },
   { href: "/calculator", label: "비용 계산기" },
-  { href: "/guide", label: "장례 가이드" },
-  { href: "/experts", label: "전문가 찾기" },
+  { href: "/burial-types", label: "장례 방식" },
+  { href: "/funeral-halls", label: "장례식장" },
+  { href: "/post-funeral", label: "사후 행정" },
+  { href: "/guide", label: "가이드" },
+  { href: "/experts", label: "전문가" },
 ];
 
 export default function Header() {
