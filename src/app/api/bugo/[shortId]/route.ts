@@ -101,6 +101,7 @@ export async function PATCH(
   // 부고 업데이트 (허용 필드만)
   const allowedFields = [
     "deceased_name", "deceased_age", "deceased_gender", "deceased_photo_url",
+    "greeting",
     "hall_id", "hall_name", "hall_address", "hall_phone", "hall_room",
     "encoffin_at", "funeral_at", "burial_place",
   ];

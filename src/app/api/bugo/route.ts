@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     if (bugoError) {
       console.error("부고 생성 실패:", bugoError);
       return NextResponse.json(
-        { error: "부고 생성에 실패했습니다." },
+        { error: `부고 생성에 실패했습니다: ${bugoError.message}` },
         { status: 500 }
       );
     }
@@ -93,6 +93,10 @@ export async function POST(request: NextRequest) {
 
     if (mournerError) {
       console.error("상주 등록 실패:", mournerError);
+      return NextResponse.json(
+        { error: `상주 등록에 실패했습니다: ${mournerError.message}` },
+        { status: 500 }
+      );
     }
 
     // 계좌 등록
@@ -111,6 +115,10 @@ export async function POST(request: NextRequest) {
 
       if (accountError) {
         console.error("계좌 등록 실패:", accountError);
+        return NextResponse.json(
+          { error: `계좌 등록에 실패했습니다: ${accountError.message}` },
+          { status: 500 }
+        );
       }
     }
 
