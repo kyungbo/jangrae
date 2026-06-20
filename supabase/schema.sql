@@ -12,6 +12,7 @@ create table bugo (
   deceased_age  int,
   deceased_gender text check (deceased_gender in ('male', 'female')),
   deceased_photo_url text,
+  greeting      text,                        -- 부고 인사말 문구
 
   -- 장례 정보
   hall_id       text,                        -- funeral_halls DB 참조 (선택)

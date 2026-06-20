@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
         deceased_age: body.deceased_age || null,
         deceased_gender: body.deceased_gender || null,
         deceased_photo_url: body.deceased_photo_url || null,
+        greeting: body.greeting || null,
         hall_id: body.hall_id || null,
         hall_name: body.hall_name.trim(),
         hall_address: body.hall_address || null,

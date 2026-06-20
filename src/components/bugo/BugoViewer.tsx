@@ -123,6 +123,15 @@ export default function BugoViewer({ bugo, isNew }: BugoViewerProps) {
           )}
         </div>
 
+        {/* 인사말 */}
+        {bugo.greeting && (
+          <div className="px-6 py-5 border-b border-border text-center">
+            <p className="text-sm text-text-primary leading-relaxed">
+              {bugo.greeting}
+            </p>
+          </div>
+        )}
+
         {/* 상주 정보 */}
         <div className="px-6 py-6 border-b border-border">
           <div className="flex items-center gap-2 mb-3">

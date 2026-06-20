@@ -80,6 +80,14 @@ function getMatchingBanks(accountNo: string): Set<string> {
   return matches;
 }
 
+const GREETINGS = [
+  "삼가 고인의 명복을 빕니다.",
+  "깊은 슬픔 속에 삼가 알려드립니다.",
+  "하늘나라에서 편히 쉬시길 기도합니다.",
+  "고인의 뜻을 기리며 삼가 알려드립니다.",
+  "영면에 드신 고인의 안식을 빕니다.",
+];
+
 const RELATIONS = [
   "아들", "딸", "배우자", "며느리", "사위",
   "손자", "손녀", "형제", "자매", "조카",
@@ -124,6 +132,8 @@ export default function BugoCreateWizard() {
   const [deceasedName, setDeceasedName] = useState("");
   const [deceasedBirthDate, setDeceasedBirthDate] = useState("");
   const [deceasedGender, setDeceasedGender] = useState<"male" | "female" | "">("");
+  const [greeting, setGreeting] = useState(GREETINGS[0]);
+  const [isCustomGreeting, setIsCustomGreeting] = useState(false);
 
   // Step 2: 상주 정보
   const [mourners, setMourners] = useState<MournerInput[]>([emptyMourner()]);
@@ -242,6 +252,7 @@ export default function BugoCreateWizard() {
         deceased_name: deceasedName.trim(),
         deceased_age: calcAge(deceasedBirthDate, deathDate) ?? undefined,
         deceased_gender: deceasedGender || undefined,
+        greeting: greeting.trim() || undefined,
         hall_id: selectedHall?.id,
         hall_name: selectedHall?.name || hallName.trim(),
         hall_address: selectedHall?.address || hallAddress.trim() || undefined,
@@ -391,6 +402,53 @@ export default function BugoCreateWizard() {
                   ))}
                 </div>
               </div>
+            </div>
+
+            {/* 인사말 문구 선택 */}
+            <div>
+              <label className="block text-sm font-medium text-navy mb-1.5">
+                부고 인사말
+              </label>
+              {isCustomGreeting ? (
+                <div className="space-y-2">
+                  <textarea
+                    value={greeting}
+                    onChange={(e) => setGreeting(e.target.value)}
+                    placeholder="부고 인사말을 직접 입력해 주세요."
+                    rows={2}
+                    maxLength={100}
+                    className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-navy/20 focus:border-navy resize-none"
+                  />
+                  <button
+                    onClick={() => { setIsCustomGreeting(false); setGreeting(GREETINGS[0]); }}
+                    className="text-xs text-text-secondary underline"
+                  >
+                    추천 문구에서 선택하기
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {GREETINGS.map((g) => (
+                    <button
+                      key={g}
+                      onClick={() => setGreeting(g)}
+                      className={`w-full text-left px-4 py-3 rounded-lg text-sm border transition-all ${
+                        greeting === g
+                          ? "bg-navy/5 border-navy text-navy font-medium"
+                          : "bg-white border-border text-text-secondary hover:border-navy-light"
+                      }`}
+                    >
+                      {g}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => { setIsCustomGreeting(true); setGreeting(""); }}
+                    className="text-xs text-text-secondary underline mt-1"
+                  >
+                    직접 입력하기
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -808,6 +866,12 @@ export default function BugoCreateWizard() {
                   {calcAge(deceasedBirthDate, deathDate) && ` (향년 ${calcAge(deceasedBirthDate, deathDate)}세)`}
                 </p>
               </div>
+              {greeting && (
+                <div>
+                  <p className="text-xs text-text-secondary">인사말</p>
+                  <p className="text-sm text-navy italic">&ldquo;{greeting}&rdquo;</p>
+                </div>
+              )}
               <div>
                 <p className="text-xs text-text-secondary">상주</p>
                 {mourners

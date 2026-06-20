@@ -4,6 +4,7 @@ export interface BugoCreateRequest {
   deceased_age?: number;
   deceased_gender?: "male" | "female";
   deceased_photo_url?: string;
+  greeting?: string;
 
   hall_id?: string;
   hall_name: string;
@@ -43,6 +44,7 @@ export interface BugoView {
   deceased_age?: number;
   deceased_gender?: string;
   deceased_photo_url?: string;
+  greeting?: string;
 
   hall_id?: string;
   hall_name: string;
