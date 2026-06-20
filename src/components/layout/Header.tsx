@@ -12,7 +12,7 @@ const navLinks = [
   { href: "/funeral-halls", label: "장례식장" },
   { href: "/post-funeral", label: "사후 행정" },
   { href: "/guide", label: "가이드" },
-  { href: "/bugo/create", label: "부고장" },
+  { href: "/bugo", label: "부고장" },
   { href: "/experts", label: "전문가" },
 ];
 

@@ -47,39 +47,62 @@ export async function POST(request: NextRequest) {
     const pinHash = await hashPin(body.pin);
 
     // 부고 생성
-    const { data: bugo, error: bugoError } = await supabase
+    const insertData: Record<string, unknown> = {
+      short_id: shortId,
+      pin_hash: pinHash,
+      deceased_name: body.deceased_name.trim(),
+      deceased_age: body.deceased_age || null,
+      deceased_gender: body.deceased_gender || null,
+      deceased_photo_url: body.deceased_photo_url || null,
+      hall_id: body.hall_id || null,
+      hall_name: body.hall_name.trim(),
+      hall_address: body.hall_address || null,
+      hall_phone: body.hall_phone || null,
+      hall_room: body.hall_room || null,
+      encoffin_at: body.encoffin_at || null,
+      funeral_at: body.funeral_at,
+      burial_place: body.burial_place || null,
+    };
+    // greeting 컬럼이 DB에 있으면 포함 (마이그레이션 전에도 동작)
+    if (body.greeting) insertData.greeting = body.greeting;
+
+    let bugo: { id: string } | null = null;
+    let bugoError: { message: string } | null = null;
+
+    const result = await supabase
       .from("bugo")
-      .insert({
-        short_id: shortId,
-        pin_hash: pinHash,
-        deceased_name: body.deceased_name.trim(),
-        deceased_age: body.deceased_age || null,
-        deceased_gender: body.deceased_gender || null,
-        deceased_photo_url: body.deceased_photo_url || null,
-        greeting: body.greeting || null,
-        hall_id: body.hall_id || null,
-        hall_name: body.hall_name.trim(),
-        hall_address: body.hall_address || null,
-        hall_phone: body.hall_phone || null,
-        hall_room: body.hall_room || null,
-        encoffin_at: body.encoffin_at || null,
-        funeral_at: body.funeral_at,
-        burial_place: body.burial_place || null,
-      })
+      .insert(insertData)
       .select("id")
       .single();
 
-    if (bugoError) {
+    bugo = result.data;
+    bugoError = result.error;
+
+    // greeting 컬럼 없는 경우 greeting 빼고 재시도
+    if (bugoError?.message?.includes("greeting")) {
+      delete insertData.greeting;
+      const retry = await supabase
+        .from("bugo")
+        .insert(insertData)
+        .select("id")
+        .single();
+      bugo = retry.data;
+      bugoError = retry.error;
+    }
+
+    if (bugoError || !bugo) {
       console.error("부고 생성 실패:", bugoError);
       return NextResponse.json(
-        { error: `부고 생성에 실패했습니다: ${bugoError.message}` },
+        { error: `부고 생성에 실패했습니다: ${bugoError?.message || "알 수 없는 오류"}` },
         { status: 500 }
       );
     }
 
+    const bugoId = bugo.id;
+
     // 상주 등록
     const mourners = body.mourners.map((m, i) => ({
-      bugo_id: bugo.id,
+      bugo_id: bugoId,
       relation: m.relation,
       name: m.name,
       is_main: m.is_main ?? i === 0,
@@ -102,7 +125,7 @@ export async function POST(request: NextRequest) {
     // 계좌 등록
     if (body.accounts?.length) {
       const accounts = body.accounts.map((a, i) => ({
-        bugo_id: bugo.id,
+        bugo_id: bugoId,
         bank_name: a.bank_name,
         account_no: a.account_no,
         holder_name: a.holder_name,

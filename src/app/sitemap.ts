@@ -73,8 +73,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: `${SITE_URL}/bugo`,
+      lastModified: new Date("2026-06-21"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: `${SITE_URL}/bugo/create`,
-      lastModified: new Date("2026-04-13"),
+      lastModified: new Date("2026-06-21"),
       changeFrequency: "monthly",
       priority: 0.8,
     },
